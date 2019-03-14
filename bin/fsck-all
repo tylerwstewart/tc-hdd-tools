@@ -49,15 +49,10 @@ fsck_busy_wait() {
 xfs_repair_exec() {
   # $1 - volume
   local vol="$1";
-  local autoaccept="$2";
   local logit="$LOG_DIR/$(date +%Y%m%d-%H%M)_xfs_repair-output.log";
-  if [ ! -z $autoaccept ]; then
-    autoaccept='-y';
-  fi;
   echo -e "\n\n\nRunning xfs_repair on $TYPE filesystem at $vol";
 
- # What should the command string be?
-  local xfs_it="";
+  local xfs_it="xfs_repair $vol";
 
 
   script -c "$xfs_it 2>&1" $logit;
@@ -122,21 +117,24 @@ echo;
 for vol in $SDX_VOLS $LVM_VOLS; do
   # Determine the type of the file system.
   filesystem_type $vol;
+
   # Don't run the check on the swap file system.
   if [ "$FILE_TYPE" != "swap" ] && [ ! -z "$FILE_TYPE" ]; then
-    # run the file system check and alert the user.
-    fsck_busy_wait $vol "$AUTOACCEPT";
 
+    # Check if it's an XFS file system and run xfs_repair if it is
+    if [[ "$FILE_TYPE" =~ "XFS" ]] || [[ "$FILE_TYPE" =~ "xfs" ]]; then
 
-  elif [[ "$FILE_TYPE" =~ "XFS" ]] && [ ! -z "$FILE_TYPE" ]; then
-    # run xfs_repair on the disk and alert the user.
-    #xfs_repair_exec $vol;
+      # run xfs_repair on the disk and alert the user.
+      xfs_repair_exec $vol;
 
-    echo -e "\n\n\n!!!File system type being reported is xfs!!!\n\n\n";
-
+    else
+      # run the e2fsck file system check and alert the user.
+      fsck_busy_wait $vol "$AUTOACCEPT";
+    fi
 
   elif [ "$FILE_TYPE" = "swap" ] && [ ! -z "$FILE_TYPE" ]; then
     echo -e "\n\n\nNo need to check $FILE_TYPE filesystem at $vol, Skipping";
+
   else
     echo -e "\n\n\nNot checking $FILE_TYPE filesystem at $vol, not supported";
   fi
