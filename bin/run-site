@@ -29,7 +29,7 @@ if [ "$SITE" = "TS" ]; then
   prompt_system
   detect_cards
   prompt_lcd
-  fsck-all long yes || exerr "fsck failed to run"
+  fsck-all long yes || exerr "fsck or xfs_repair failed to run"
   smart_process || exerr "Smart failed to run";
   run_hdparm || exerr "hdparm failed to run"
 elif [ "$SITE" = "SSD" ]; then
@@ -50,7 +50,7 @@ elif [ "$SITE" = "FA" ]; then
   network-tests-stats "$L_NETWORK" || exerr "Network Stats couldn't be collected"
   [ -z "$SHRED_RUN" ] && call_shred long
 else
-  fsck-all short yes || exerr "fsck failed to run"
+  fsck-all short yes || exerr "fsck or xfs_repair failed to run"
 fi
 
 # Bundle logs

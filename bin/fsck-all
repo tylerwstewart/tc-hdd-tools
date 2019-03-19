@@ -45,7 +45,7 @@ fsck_busy_wait() {
 }
 
 
-# Add function to run xfs_repair
+# Function to run xfs_repair if disk is using an XFS filesystem
 xfs_repair_exec() {
   # $1 - volume
   local vol="$1";
@@ -67,6 +67,9 @@ check_arguments() {
     case $i in
       short|SHORT|Short)
         FSCK_ARGS="$FSCK_ARGS_SHORT";
+        ;;
+      long|LONG|Long)
+        FSCK_ARGS="$FSCK_ARGS_LONG";
         ;;
       yes|YES|Yes)
         AUTOACCEPT="yes";
@@ -90,6 +93,13 @@ Examples
     $0 yes; Run 'e2fsck -yfcck'
     $0 short yes; Run 'e2fsck -yf'
     $0 trim; Run 'e2fsck -fcck -E discard' user will approve all actions
+
+
+Note: For XFS volumes, $0 will run the 'xfs_repair' utility instead, using
+its default settings without any options. Alternatively, you can run
+'xfs_repair' manually from the command line using additional options if
+necessary. See the man page for 'xfs_repair' to get more information.
+
 
 EOF
         exit 0
