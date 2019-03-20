@@ -95,10 +95,10 @@ Examples
     $0 trim; Run 'e2fsck -fcck -E discard' user will approve all actions
 
 
-Note: For XFS volumes, $0 will run the 'xfs_repair' utility instead, using
-its default settings without any options. Alternatively, you can run
-'xfs_repair' manually from the command line using additional options if
-necessary. See the man page for 'xfs_repair' to get more information.
+Note: For XFS volumes, this script will run the 'xfs_repair' utility
+instead, using its default settings without any options. Alternatively,
+you can run 'xfs_repair' manually from the command line using additional
+options if necessary. See the 'xfs_repair' man page for more information.
 
 
 EOF
